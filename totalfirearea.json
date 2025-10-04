@@ -1,0 +1,89 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Line chart with annotation for a specific year.",
+  "title": "Total Fire Area in Australia",
+  "width": 800,
+  "height": 450,
+  "data": {
+    "url": "data/australian_annual_bushfire_area_edited.csv",
+    "format": {
+      "type": "csv"
+    }
+  },
+  "params": [{
+    "name": "Max_Year",
+    "value": 2020,
+    "bind": {
+    "input": "range",
+    "min": 2011,
+    "max": 2020,
+    "step": 1,
+    "name": "Max Year: "
+    }
+    }],
+  "transform": [
+    {
+      "filter": "year(datum.year_lvl) >= 2010 && year(datum.year_lvl) <= Max_Year"
+    }
+  ],
+  "layer": [
+    {
+      
+      "mark": "line",
+      "encoding": {
+        "x": {
+          "field": "year_lvl",
+          "type": "temporal",
+          "timeUnit": "year",
+          "title": "Year",
+          "axis": {
+            "format": "%Y",
+            "tickCount": "year",
+            "labelAngle": -45
+          }
+        },
+        "y": {
+          "field": "Total_fire_area",
+          "type": "quantitative",
+          "title": "Total Fire Area (Million Hectares)",
+          "scale": {"domainMax": 100}
+        }
+      }
+    },
+    {
+     
+      "mark": {"type": "circle", "color": "red", "size": 100},
+      "transform": [
+        {
+          "filter": "year(datum.year_lvl) == 2015" 
+        }
+      ],
+      "encoding": {
+        "x": {"field": "year_lvl", "type": "temporal", "timeUnit": "year"},
+        "y": {"field": "Total_fire_area", "type": "quantitative", "scale": {"domainMax": 100}}
+      }
+    },
+    {
+      "mark": {"type": "text", "dy": -15, "align": "center", "color": "red", "fontWeight": "bold"},
+      "transform": [
+        {
+          "filter": "year(datum.year_lvl) == 2015" 
+        }
+      ],
+      "encoding": {
+        "x": {"field": "year_lvl", "type": "temporal", "timeUnit": "year"},
+        "y": {"field": "Total_fire_area", "type": "quantitative", "scale": {"domainMax": 100}},
+        "text": {"value": "Record Year"} 
+      }
+    }
+  ],
+
+  "encoding": {
+    "tooltip": [
+      {"field": "Total_fire_area", "type": "quantitative", "title": "Total Fire Area(Million Hectares)"},
+      {"field": "year_lvl", "type":"temporal", "timeUnit":"year", "title": "Year "}
+    ]
+  },
+  
+  "resolve": {"scale": {"y": "shared"}} 
+}
